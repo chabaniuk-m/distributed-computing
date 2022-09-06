@@ -1,6 +1,8 @@
-package lab1;
+package ua.lab1;
 
 import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ProjectB {
     /**
@@ -54,11 +56,17 @@ public class ProjectB {
 
         startBtn1.addActionListener(e -> {
             if (semaphore == 0) {
-                if (!th1.isInterrupted()) {
-                    semaphore = 1;
-                    th1.setPriority(Thread.MIN_PRIORITY);
-                    th1.start();
-                    label.setText("Виконується перший потік");
+                semaphore = 1;
+                label.setText("Виконується перший потік");
+                if (!th1.isAlive()){
+                    try {
+                        th1.start();
+                        System.out.println("The first thread started");
+                        th1.setPriority(Thread.MIN_PRIORITY);
+                    } catch (IllegalThreadStateException ex) {
+                        label.setText("Перший потік знищений");
+                        semaphore = 0;
+                    }
                 }
             } else {
                 label.setText("Зайнято потоком");
@@ -66,11 +74,17 @@ public class ProjectB {
         });
         startBtn2.addActionListener(e -> {
             if (semaphore == 0) {
-                if (!th2.isInterrupted()){
-                    semaphore = 2;
-                    th2.setPriority(Thread.MAX_PRIORITY);
-                    th2.start();
-                    label.setText("Виконується другий потік");
+                semaphore = 2;
+                label.setText("Виконується другий потік");
+                if (!th2.isAlive()){
+                    try {
+                        th2.start();
+                        System.out.println("The second thread started");
+                        th2.setPriority(Thread.MIN_PRIORITY);
+                    } catch (IllegalThreadStateException ex) {
+                        label.setText("Другий потік знищений");
+                        semaphore = 0;
+                    }
                 }
             } else {
                 label.setText("Зайнято потоком");
@@ -78,16 +92,30 @@ public class ProjectB {
         });
         stopBtn1.addActionListener(e -> {
             if (semaphore == 1) {
-                th1.interrupt();
                 semaphore = 0;
                 label.setText("Вільно");
             }
         });
         stopBtn2.addActionListener(e -> {
             if (semaphore == 2) {
-                th2.interrupt();
                 semaphore = 0;
                 label.setText("Вільно");
+            }
+        });
+        stopBtn1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    th1.interrupt();
+                }
+            }
+        });
+        stopBtn2.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    th2.interrupt();
+                }
             }
         });
     }
@@ -102,7 +130,18 @@ class Runner1 implements Runnable {
 
     @Override
     public void run() {
-        slider.setValue(10);
+        while (true) {
+            if (ProjectB.semaphore == 1) {
+                slider.setValue(10);
+            }
+            System.out.println("First thread is running");
+            try {
+                Thread.sleep(400);
+            } catch (InterruptedException e) {
+                System.out.println("Перший потік знищено");
+                return;
+            }
+        }
     }
 }
 
@@ -115,6 +154,17 @@ class Runner2 implements Runnable {
 
     @Override
     public void run() {
-        slider.setValue(90);
+        while (true) {
+            if (ProjectB.semaphore == 2) {
+                slider.setValue(90);
+            }
+            System.out.println("Second thread is running");
+            try {
+                Thread.sleep(400);
+            } catch (InterruptedException e) {
+                System.out.println("Другий потік знищено");
+                return;
+            }
+        }
     }
 }
