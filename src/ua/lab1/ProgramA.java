@@ -1,4 +1,4 @@
-package lab1;
+package ua.lab1;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -24,11 +24,9 @@ public class ProgramA {
             while (true) {
                 synchronized (slider) {
                     slider.setValue(10);
-                    // test
-                    System.out.println("Thread1");
                 }
                 try {
-                    Thread.sleep(10);
+                    Thread.sleep(50);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -38,11 +36,9 @@ public class ProgramA {
             while (true) {
                 synchronized (slider) {
                     slider.setValue(90);
-                    // test
-                    System.out.println("Thread2");
                 }
                 try {
-                    Thread.sleep(10);
+                    Thread.sleep(50);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -59,12 +55,14 @@ public class ProgramA {
             @Override
             public void stateChanged(ChangeEvent e) {
                 th1.setPriority(getSpinnerValue((JSpinner) e.getSource()));
+                System.out.println("Пріоритет першого потоку змінено на " + th1.getPriority());
             }
         });
         spinner2.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 th2.setPriority(getSpinnerValue((JSpinner) e.getSource()));
+                System.out.println("Пріоритет другого потоку змінено на " + th2.getPriority());
             }
         });
 

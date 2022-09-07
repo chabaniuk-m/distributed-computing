@@ -80,7 +80,7 @@ public class ProjectB {
                     try {
                         th2.start();
                         System.out.println("The second thread started");
-                        th2.setPriority(Thread.MIN_PRIORITY);
+                        th2.setPriority(Thread.MAX_PRIORITY);
                     } catch (IllegalThreadStateException ex) {
                         label.setText("Другий потік знищений");
                         semaphore = 0;
