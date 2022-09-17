@@ -3,6 +3,7 @@ package ua.lab1;
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Objects;
 
 public class ProjectB {
     /**
@@ -11,6 +12,7 @@ public class ProjectB {
      * 2 - зайнято, працює другий потік
      */
     public static int semaphore = 0;
+    public static Objects sync = (Objects) new Object();
 
     public static void main(String[] args) {
         JFrame frame = new JFrame();

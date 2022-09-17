@@ -23,10 +23,12 @@ public class ProgramA {
         Thread th1 = new Thread(() -> {
             while (true) {
                 synchronized (slider) {
-                    slider.setValue(10);
+                    if (slider.getValue() > 10) {
+                        slider.setValue(slider.getValue() - 10);
+                    }
                 }
                 try {
-                    Thread.sleep(50);
+                    Thread.sleep(3);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -35,10 +37,12 @@ public class ProgramA {
         Thread th2 = new Thread(() -> {
             while (true) {
                 synchronized (slider) {
-                    slider.setValue(90);
+                    if (slider.getValue() < 90) {
+                        slider.setValue(slider.getValue() + 10);
+                    }
                 }
                 try {
-                    Thread.sleep(50);
+                    Thread.sleep(3);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -69,8 +73,10 @@ public class ProgramA {
         JButton btn = new JButton("Пуск");
         btn.setBounds(165, 130, 70, 30);
         btn.addActionListener(e -> {
-            th1.start();
-            th2.start();
+            synchronized (slider) {
+                th1.start();
+                th2.start();
+            }
         });
 
         panel.setLayout(null);
