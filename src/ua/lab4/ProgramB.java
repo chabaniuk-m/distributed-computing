@@ -16,10 +16,10 @@ public class ProgramB {
     static final Garden garden = new Garden();
     public static void main(String[] args) {
         List<Thread> list = new ArrayList<>(4){{
-            add(new Thread(new Gardener()));
-            add(new Thread(new Nature()));
             add(new Thread(new Console()));
+            add(new Thread(new Gardener()));
             add(new Thread(new File()));
+            add(new Thread(new Nature()));
         }};
         list.forEach(Thread::start);
     }

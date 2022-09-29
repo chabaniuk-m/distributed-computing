@@ -16,12 +16,13 @@ type Graph struct {
 
 func newSampleGraph() *Graph {
 	mtx := [][]int{
-		{0, 16, -1, 12, -1, -1},
-		{16, 0, 20, -1, -1, -1},
-		{-1, 20, 0, 23, -1, -1},
-		{12, -1, 23, 0, 10, -1},
-		{-1, -1, -1, 10, 0, 10},
-		{-1, -1, -1, -1, 10, 0},
+		//	 0   1   2   3   4   5
+		{0, 16, -1, 12, -1, -1}, // 0
+		{16, 0, 20, -1, -1, -1}, // 1
+		{-1, 20, 0, 23, -1, -1}, // 2
+		{12, -1, 23, 0, 10, -1}, // 3
+		{-1, -1, -1, 10, 0, 10}, // 4
+		{-1, -1, -1, -1, 10, 0}, // 5
 	}
 	g := Graph{matrix: mtx}
 	return &g
@@ -34,7 +35,10 @@ func (g *Graph) print() {
 }
 
 func (g *Graph) changePrice(a, b, newPrice int) {
-	if 0 <= a && a < len(g.matrix) && 0 <= b && b < len(g.matrix) {
+	g.RLock()
+	okay := 0 <= a && a < len(g.matrix) && 0 <= b && b < len(g.matrix)
+	g.RUnlock()
+	if okay {
 		if a == b {
 			fmt.Printf("Рейс між одним і тим самим містом %d не прокладається\n", a)
 			return
@@ -57,7 +61,10 @@ func (g *Graph) changePrice(a, b, newPrice int) {
 }
 
 func (g *Graph) deleteAddRoute(delA, delB, addA, addB, routePrice int) {
-	if 0 <= delA && delA < len(g.matrix) && 0 <= delB && delB < len(g.matrix) && 0 <= addA && addA <= len(g.matrix) && 0 <= addB && addB <= len(g.matrix) {
+	g.RLock()
+	okay := 0 <= delA && delA < len(g.matrix) && 0 <= delB && delB < len(g.matrix) && 0 <= addA && addA <= len(g.matrix) && 0 <= addB && addB <= len(g.matrix)
+	g.RUnlock()
+	if okay {
 		g.Lock()
 		if g.matrix[delA][delB] > 0 {
 			g.matrix[delA][delB] = -1
@@ -86,7 +93,10 @@ func (g *Graph) deleteAddRoute(delA, delB, addA, addB, routePrice int) {
 }
 
 func (g *Graph) deleteAddCity(delA int) {
-	if 0 <= delA && delA < len(g.matrix) {
+	g.RLock()
+	okay := 0 <= delA && delA < len(g.matrix)
+	g.RUnlock()
+	if okay {
 		g.Lock()
 		for i := 0; i < len(g.matrix); i++ {
 			if i != delA {
@@ -104,7 +114,10 @@ func (g *Graph) deleteAddCity(delA int) {
 }
 
 func (g *Graph) findPath(a, b int) {
-	if 0 <= a && a < len(g.matrix) && 0 <= b && b < len(g.matrix) {
+	g.RLock()
+	okay := 0 <= a && a < len(g.matrix) && 0 <= b && b < len(g.matrix)
+	g.RUnlock()
+	if okay {
 		if a == b {
 			fmt.Printf("Зрозуміло, що шлях з міста %d до міста %d існує і його ціна становить 0$")
 		} else {
