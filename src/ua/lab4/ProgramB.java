@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+
 public class ProgramB {
     static final int N = 4;
     static final Path filePath = Path.of("C:\\Users\\Admin\\source\\IntelliJ IDEA\\distributed-computing\\src\\ua\\lab4\\resources\\output.txt");
