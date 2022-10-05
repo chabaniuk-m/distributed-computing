@@ -7,6 +7,7 @@ import (
 	"sync"
 )
 
+
 var wg sync.WaitGroup
 
 type Graph struct {
