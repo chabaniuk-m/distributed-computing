@@ -3,7 +3,7 @@ package ua.lab6;
 import java.util.Random;
 
 public class CannonMatrix {
-    private final int numberBlocks = 4;
+    public final int numberBlocks = 4;
     private int[][][][] A;
     private int[][][][] B;
     private int[][][][] C;

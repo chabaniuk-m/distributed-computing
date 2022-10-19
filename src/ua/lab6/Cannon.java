@@ -15,12 +15,11 @@ public class Cannon {
         matrix.shiftLeft();
         matrix.shiftUp();
         startSetThreads();
-        matrix.shiftLeftSimple();
-        matrix.shiftUpSimple();
-        startSetThreads();
-        matrix.shiftLeftSimple();
-        matrix.shiftUpSimple();
-        startSetThreads();
+        for (int i = 1; i < this.matrix.numberBlocks; i++) {
+            matrix.shiftLeftSimple();
+            matrix.shiftUpSimple();
+            startSetThreads();
+        }
     }
 
     private void startSetThreads() {
