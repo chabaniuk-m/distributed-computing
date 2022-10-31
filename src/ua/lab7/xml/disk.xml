@@ -1,6 +1,18 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <disk>
     <folder id="0" name="documents">
-        <file id="0" folderID="0" name="report.docx" visible="true" readable="true" writeable="false" size="24802982" lastUpdated="2022-10-31T12:17:04"/>
+        <file folderID="0" id="0" lastUpdated="2022-10-31T15:58:09" name="report.docx" readable="true" size="32384728" visible="true" writeable="false"/>
+        <file folderID="0" id="3" lastUpdated="2022-10-31T21:55:19" name="lecture.pptx" readable="true" size="98123748" visible="true" writeable="false"/>
+    </folder>
+    <folder id="1" name="pictures">
+        <file folderID="1" id="2" lastUpdated="2022-10-31T20:51:26" name="mountains.jpg" readable="true" size="523194917" visible="true" writeable="false"/>
+    </folder>
+    <folder id="2" name="videos">
+        <file folderID="2" id="4" lastUpdated="2022-10-31T20:59:27" name="Spiderman.avi" readable="true" size="876234627" visible="true" writeable="false"/>
+        <file folderID="2" id="5" lastUpdated="2022-10-31T21:00:23" name="Ironman.avi" readable="true" size="93847823" visible="true" writeable="false"/>
+    </folder>
+    <folder id="3" name="Program Files">
+        <file folderID="3" id="7" lastUpdated="2022-10-31T22:15:55" name="obs-studio-installer.exe" readable="true" size="203852349" visible="true" writeable="false"/>
+        <file folderID="3" id="6" lastUpdated="2022-10-31T22:10:59" name="win.dat" readable="true" size="29472" visible="false" writeable="false"/>
     </folder>
 </disk>
