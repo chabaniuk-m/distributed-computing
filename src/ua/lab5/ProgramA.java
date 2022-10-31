@@ -14,7 +14,7 @@ LIVELOCK
 
 public class ProgramA {
     static int nThreads;
-    static int nRecruits = 230;
+    static int nRecruits = 500;
     static int capacity = 50;
     static int onBarrier = 0;
     static final Object barrier = new Object();
