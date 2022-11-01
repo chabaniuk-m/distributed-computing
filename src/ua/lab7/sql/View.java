@@ -5,10 +5,10 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class View {
-    private Controller controller;
     private final Scanner scanner = new Scanner(System.in);
 
     public void start() {
+        Controller controller;
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/disk", "Admin", "19Max#177m");
             controller = new Controller(connection, scanner);
@@ -16,8 +16,10 @@ public class View {
         } catch (SQLException e) {
             System.out.println("ERROR: cannot connect to database");
             System.out.println(e.getMessage());
+            throw new RuntimeException();
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            throw new RuntimeException();
         }
         try {
             showCommands();
@@ -112,6 +114,7 @@ public class View {
                  - files: shows all files in the database
                  - folders: shows all folders in the database
                  - update file: finds file by code and updates selected attribute
+                 - update folder: finds folder by code and changes its name
                 """);
     }
 }
