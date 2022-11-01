@@ -74,7 +74,7 @@ public class Viewer {
                 String str = command.substring(12).trim();
                 try {
                     int code = Integer.parseInt(str);
-                    if (code < 0) throw new NoSuchElementException();
+                    if (code < 0) throw new NumberFormatException();
                     dao.deleteFile(code);
                 } catch (NumberFormatException e) {
                     System.out.println("After a \"delete file\" you must specify a non-negative integer value");
@@ -110,7 +110,6 @@ public class Viewer {
                     System.out.println("After a \"update folder\" you must specify a non-negative integer value");
                 }
             }
-
             else {
                 System.out.printf("Command \"%s\" is not recognized\nTry one of the following commands:\n", command);
                 showCommands();
