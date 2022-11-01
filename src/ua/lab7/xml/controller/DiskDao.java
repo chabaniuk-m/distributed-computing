@@ -143,6 +143,8 @@ public class DiskDao implements Dao {
                 Path.of(name);
             } catch (InvalidPathException e) {
                 System.out.println(e.getMessage());
+                if (askUser("Create file with another name?"))
+                    continue;
             }
             String finalName = name;
             if (files.stream().noneMatch(file -> file.folderCode == finalFolderCode && file.name.equals(finalName))) {
@@ -158,6 +160,7 @@ public class DiskDao implements Dao {
             System.out.print("File size in bytes: ");
             try {
                 size = Integer.parseInt(scanner.nextLine());
+                if (size < 0) throw new NumberFormatException();
                 break;
             } catch (NumberFormatException e) {
                 System.out.println("ERROR: size of file must be a positive integer");
@@ -315,9 +318,11 @@ public class DiskDao implements Dao {
                                 scanner = new Scanner(System.in);
                                 int folderCode = scanner.nextInt();
                                 if (folders.stream().noneMatch(folder -> folder.code == folderCode)) {
-                                    System.out.printf("There is no folder with an id %d\n", code);
+                                    System.out.printf("There is no folder with an id %d\n", folderCode);
                                     if (!askUser("Do you want to enter another folder id?"))
                                         break;
+                                } else if (files.stream().filter(file -> file.folderCode == folderCode).anyMatch(file -> Objects.equals(file.name, optionalFile.get().name))) {
+                                    System.out.printf("Folder \"%s\" already contains file \"%s\"\n", folders.stream().filter(folder -> folder.code == folderCode).findFirst().get().name, optionalFile.get().name);
                                 } else {
                                     optionalFile.get().folderCode = folderCode;
                                     break;
