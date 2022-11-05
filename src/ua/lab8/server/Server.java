@@ -55,7 +55,7 @@ public class Server {
 
     private static void copyFile() {
         try {
-            String[] srcFileDst = in.readLine().split(" ");
+            String[] srcFileDst = in.readLine().split("/");
             dao.copyFile(srcFileDst[0], srcFileDst[1], srcFileDst[2]);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -64,7 +64,7 @@ public class Server {
 
     private static void updateFile() {
         try {
-            String[] pathAndUpdate = in.readLine().split(" ");
+            String[] pathAndUpdate = in.readLine().split("\\*");
             String[] path = pathAndUpdate[0].split("/");
             String[] update = pathAndUpdate[1].split(":");
             System.out.printf("Updating file \"%s/%s\": %s = %s\n", path[0], path[1], update[0], update[1]);
@@ -87,7 +87,7 @@ public class Server {
     private static void deleteFile() {
         try {
             var path = in.readLine().split("/");
-            out.println(dao.deleteFiles(path[0], path[1]));
+            out.println(dao.deleteFile(path[0], path[1]));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
