@@ -1,4 +1,4 @@
-package ua.lab8.client.model;
+package ua.lab8.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
