@@ -1,6 +1,8 @@
-package ua.lab8.model;
+package ua.lab8.client.model;
 
-public class Folder {
+import java.io.Serializable;
+
+public class Folder implements Serializable {
     public String name;         // Назва папки
 
     public Folder(String name) {

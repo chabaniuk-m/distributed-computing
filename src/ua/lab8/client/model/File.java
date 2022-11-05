@@ -1,8 +1,9 @@
-package ua.lab8.model;
+package ua.lab8.client.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class File {
+public class File implements Serializable {
     public String folderName;           // Ім'я папки, у якій знаходиться файл
     public String fileName;                 // Ім'я файлу з розширенням
     public long size;                    // Розмір файлу в байтах
@@ -27,7 +28,7 @@ public class File {
 
     @Override
     public String toString() {
-        return String.format("File{ name=\"%s/%s\", size=%d,\nvisible=%b, readable=%b, writeable=%b, lastUpdated=%s }",
+        return String.format("File{ name=\"%s/%s\", size=%d, visible=%b, readable=%b, writeable=%b, lastUpdated=%s }",
                 folderName, fileName, size, isVisible, isReadable, isWritable, lastUpdated.toString());
     }
 }
