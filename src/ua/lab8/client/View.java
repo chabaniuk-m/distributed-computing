@@ -4,9 +4,15 @@ import java.util.Scanner;
 
 public class View {
 
+    private final Controller controller;
+    private Scanner scanner;
+
+    public View(Controller controller, Scanner scanner) {
+        this.controller = controller;
+        this.scanner = scanner;
+    }
+
     public void start() {
-        Scanner scanner = new Scanner(System.in);
-        Client controller = new Client(scanner);
         showCommands();
         while (true) {
             System.out.print("Enter a command: ");
