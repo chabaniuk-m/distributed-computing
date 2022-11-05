@@ -43,10 +43,22 @@ public class Server {
                 case "delete folder" -> deleteFolder();
                 case "delete file" -> deleteFile();
                 case "update file" -> updateFile();
+                case "copy file" -> copyFile();
                 case "folders" -> readAllFolders();
                 case "files" -> readAllFilesInFolder();
                 case "exit" -> System.exit(0);
+                default ->
+                    throw new IllegalArgumentException("Command \"" + command + "\" is not recognized");
             }
+        }
+    }
+
+    private static void copyFile() {
+        try {
+            String[] srcFileDst = in.readLine().split(" ");
+            dao.copyFile(srcFileDst[0], srcFileDst[1], srcFileDst[2]);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -91,8 +103,7 @@ public class Server {
 
     private static void readAllFolders() {
         System.out.println("Client requested all folders");
-        String allFolders = dao.readAllFolders();
-        out.println(allFolders.equals("") ? "<empty>" : allFolders);
+        out.println(dao.readAllFolders());
     }
 
     private static void createFile() {

@@ -9,10 +9,7 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Client {
     public static void main(String[] args) {
@@ -21,6 +18,7 @@ public class Client {
     }
 
     private Scanner scanner;
+    private final Socket socket;
     private final BufferedReader in;
     private final PrintWriter out;
     private final Reader reader;
@@ -29,7 +27,7 @@ public class Client {
         this.scanner = scanner;
         try {
             reader = new Reader();
-            Socket socket = new Socket(Server.HOST, Server.PORT);
+            socket = new Socket(Server.HOST, Server.PORT);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
         } catch (IOException e) {
@@ -54,7 +52,7 @@ public class Client {
             return name;
         }
 
-        String readFileName() {
+        String readFileName(List<String> files) {
             String name;
             while (true) {
                 System.out.print("File name: ");
@@ -63,6 +61,11 @@ public class Client {
                 } while (name.isEmpty());
                 try {
                     Path.of(name);
+                    if (files != null && !files.contains(name)) {
+                        System.out.printf("There is no file with name \"%s\" in the current folder.\nTry one of the following:\n", name);
+                        files.forEach(System.out::println);
+                        continue;
+                    }
                     break;
                 } catch (InvalidPathException e) {
                     System.out.println(e.getMessage());
@@ -110,14 +113,14 @@ public class Client {
         List<String> folders = new ArrayList<>();
         try {
             while (true) {
-                String str = in.readLine();         // something like 'Folder{ name="Documents" }
+                String str = in.readLine();         // something like 'Folder{ name="Documents" }'
                 if (str.equals("end")) break;
                 folders.add(str);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        if (!detailed && folders.size() > 0 && !folders.get(0).equals("<empty>"))
+        if (!detailed)
             folders = folders.stream().map(folder -> folder.substring(folder.indexOf('\"') + 1, folder.lastIndexOf('\"'))).toList();
         return folders;
     }
@@ -136,7 +139,7 @@ public class Client {
         boolean readable = reader.readBoolean();
         System.out.print("Is file writeable: ");
         boolean writeable = reader.readBoolean();
-        String fileName = reader.readFileName();
+        String fileName = reader.readFileName(null);
         // try to save object
         while (true) {
             JSONObject jsonObject = new JSONObject();
@@ -163,7 +166,7 @@ public class Client {
             }
             System.out.println(response);
             if (askUser("Choose another file name?"))
-                fileName = reader.readFileName();
+                fileName = reader.readFileName(null);
             else if (askUser("Maybe choose another folder location?"))
                 folderName = reader.readFolderName(folders);
             else
@@ -206,7 +209,10 @@ public class Client {
 
     public void deleteFolder() {
         String folderName = reader.readFolderName(readFolders(false));
-        System.out.println("Are you sure you want to delete folder with the following files:");
+        if (readFolders(false).isEmpty()) {
+            System.out.println("File system is empty. Try to create something first");
+            return;
+        }        System.out.println("Are you sure you want to delete folder with the following files:");
         getAllFilesInFolder(false, folderName);
         if (!askUser("?"))
             return;
@@ -221,8 +227,11 @@ public class Client {
 
     public void deleteFile() {
         var folders = readFolders(false);
-        String folderName = reader.readFolderName(folders);
-        String fileName = reader.readFileName();
+        if (folders.isEmpty()) {
+            System.out.println("File system is empty. Try to create something first");
+            return;
+        }        String folderName = reader.readFolderName(folders);
+        String fileName = reader.readFileName(null);
         out.println("delete file");
         out.println(folderName + "/" + fileName);
         try {
@@ -234,7 +243,10 @@ public class Client {
 
     public void updateFile() {
         var folders = readFolders(false);
-        System.out.println("Firstly we need to find the file");
+        if (folders.isEmpty()) {
+            System.out.println("File system is empty. Try to create something first");
+            return;
+        }        System.out.println("Firstly we need to find the file");
         String folderName, fileName;
         List<String> files;
         while (true) {
@@ -250,7 +262,7 @@ public class Client {
             break;
         }
         while (true) {
-            fileName = reader.readFileName();
+            fileName = reader.readFileName(null);
             if (files.contains(fileName))
                 break;
             else {
@@ -265,7 +277,7 @@ public class Client {
             switch (attr) {
                 case "file_name" -> {
                     while (true) {
-                        newValue = reader.readFileName();
+                        newValue = reader.readFileName(null);
                         if (files.contains(newValue)) {
                             System.out.printf("File with this name is already present in folder \"%s\"\n", folderName);
                             if (askUser("Do you want to choose another name?"))
@@ -321,12 +333,69 @@ public class Client {
         }
     }
 
+    private Map<String, String> readFileMovingAttrs() {
+        Map<String, String> map = new HashMap<>();
+        var folders = readFolders(false);
+        if (folders.isEmpty()) {
+            System.out.println("File system is empty. Try to create something first");
+            return null;
+        } else if (folders.size() == 1) {
+            System.out.println("This operation is unsupported: there is only 1 file in the file system");
+            return null;
+        }
+        System.out.println("Firstly we need to find the file by name and folder");
+        List<String> files;
+        while (true) {
+            map.put("src_folder", reader.readFolderName(folders));
+            files = getAllFilesInFolder(false, map.get("src_folder"));
+            if (files.isEmpty()) {
+                System.out.println("This folder is empty");
+                if (askUser("Choose another folder?"))
+                    continue;
+                else
+                    return null;
+            }
+            break;
+        }
+        String fileName = reader.readFileName(files);
+        String dstFolder;
+        while (true) {
+            dstFolder = reader.readFolderName(folders);
+            files = getAllFilesInFolder(false, dstFolder);
+            if (files.contains(fileName)) {
+                System.out.printf("Folder \"%s\" contains file with name \"%s\"\n", dstFolder, fileName);
+                if (askUser("Do you want to choose another folder?"))
+                    continue;
+                else
+                    return null;
+            }
+            break;
+        }
+        map.put("file_name", fileName);
+        map.put("dst_folder", dstFolder);
+
+        return map;
+    }
+
     public void moveFile() {
-        throw new UnsupportedOperationException();
+        var map = readFileMovingAttrs();
+        if (map == null) return;
+        String fileName = map.get("file_name");
+        String dstFolder = map.get("dst_folder");
+        out.println("update file");
+        out.println(map.get("src_folder") + "/" + fileName + " folder_name:" + dstFolder);
+        System.out.printf("File \"%s\" is successfully moved to folder \"%s\"\n", fileName, dstFolder);
     }
 
     public void copyFile() {
-        throw new UnsupportedOperationException();
+        var map = readFileMovingAttrs();
+        if (map == null) return;
+        String fileName = map.get("file_name");
+        String srcFolder = map.get("src_folder");
+        String dstFolder = map.get("dst_folder");
+        out.println("copy file");
+        out.println(srcFolder + " " + fileName + " " + dstFolder);
+        System.out.printf("File \"%s\" is successfully copied to folder \"%s\"\n", fileName, dstFolder);
     }
 
     public void showAllFolders() {
@@ -375,6 +444,11 @@ public class Client {
 
     public void exit() {
         out.println("exit");
+        try {
+            socket.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private boolean askUser(String question) {
