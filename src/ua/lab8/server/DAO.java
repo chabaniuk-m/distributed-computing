@@ -1,7 +1,7 @@
 package ua.lab8.server;
 
-import ua.lab8.client.model.File;
-import ua.lab8.client.model.Folder;
+import ua.lab8.model.File;
+import ua.lab8.model.Folder;
 
 import java.sql.*;
 import java.time.LocalDateTime;
