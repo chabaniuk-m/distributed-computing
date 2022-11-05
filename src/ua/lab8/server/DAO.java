@@ -71,4 +71,8 @@ public class DAO {
         // TODO don't forget to update last_updated attribute
         // file is guarantied present in the provided folder
     }
+
+    public void copyFile(String srcFolder, String fileName, String dstFolder) {
+        // TODO create new file
+    }
 }
