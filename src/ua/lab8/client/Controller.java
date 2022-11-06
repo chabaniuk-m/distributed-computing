@@ -309,7 +309,7 @@ public class Controller {
         }
         String fileName = reader.readFileName(files);
         String dstFolder;
-        System.out.println("Where to move file?");
+        System.out.println("Where to move/copy file?");
         while (true) {
             dstFolder = reader.readFolderName(folders);
             files = getAllFilesInFolder(false, dstFolder);

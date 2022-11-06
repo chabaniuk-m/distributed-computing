@@ -104,6 +104,7 @@ public class SocketClient implements Client {
     @Override
     public List<String> queryFiles(String folderName) {
         out.println("files");
+        out.println(folderName);
         List<String> files = new ArrayList<>();
         try {
             do {
