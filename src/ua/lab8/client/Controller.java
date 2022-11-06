@@ -92,13 +92,7 @@ public class Controller {
     }
 
     private List<String> readFolders(boolean detailed) {
-        client.println("folders");
-        List<String> folders = new ArrayList<>();
-        while (true) {
-            String str = client.readLine();         // something like 'Folder{ name="Documents" }'
-            if (str.equals("end")) break;
-            folders.add(str);
-        }
+        var folders = client.queryFolders();
         if (!detailed)
             folders = folders.stream().map(folder -> folder.substring(folder.indexOf('\"') + 1, folder.lastIndexOf('\"'))).toList();
         return folders;
@@ -106,7 +100,7 @@ public class Controller {
 
     public void createFile() {
         var folders = readFolders(false);
-        if (folders.size() == 0 || folders.get(0).equals("<empty>")) {
+        if (folders.size() == 0) {
             System.out.println("There is no folders in file system, but before file creation at least one must be");
             return;
         }
@@ -130,10 +124,7 @@ public class Controller {
             jsonObject.put("is_writeable", "" + writeable);
             jsonObject.put("last_updated", "" + Timestamp.valueOf(LocalDateTime.now()));
 
-            client.println("create file");
-            client.println(jsonObject.toJSONString() + "\nend");
-
-            String response = client.readLine();
+            String response = client.saveFile(jsonObject.toJSONString() + "\nend");
             if (response.equals("success")) {
                 System.out.printf("File \"%s/%s\" is successfully created\n", folderName, fileName);
                 break;
@@ -163,9 +154,7 @@ public class Controller {
                         return;
                 }
             }
-            client.println("create folder");
-            client.println(name);
-            String response = client.readLine().replace('\\', '\n');
+            String response = client.saveFolder(name);
             if (response.equals("success"))
                 break;
             else {
@@ -188,9 +177,8 @@ public class Controller {
             System.out.println("<empty>");
         if (!askUser("?"))
             return;
-        client.println("delete folder");
-        client.println(folderName);
-        System.out.println(client.readLine());
+
+        System.out.println(client.queryDeleteFolder(folderName));
     }
 
     public void deleteFile() {
@@ -199,10 +187,9 @@ public class Controller {
             System.out.println("File system is empty. Try to create something first");
             return;
         }        String folderName = reader.readFolderName(folders);
-        String fileName = reader.readFileName(null);
-        client.println("delete file");
-        client.println(folderName + "/" + fileName);
-        System.out.println(client.readLine());
+        String fileName = reader.readFileName(getAllFilesInFolder(false, folderName));
+
+        System.out.println(client.queryDeleteFile(folderName, fileName));
     }
 
     public void updateFile() {
@@ -285,8 +272,7 @@ public class Controller {
                     continue;
                 }
             }
-            client.println("update file");
-            client.println(folderName + "/" + fileName + "*" + attr + ":" + newValue);
+            client.queryUpdateFile(folderName + "/" + fileName + "*" + attr + ":" + newValue);
             if (attr.equals("file_name"))
                 fileName = newValue;
             else if (attr.equals("folder_name"))
@@ -347,8 +333,7 @@ public class Controller {
         if (map == null) return;
         String fileName = map.get("file_name");
         String dstFolder = map.get("dst_folder");
-        client.println("update file");
-        client.println(map.get("src_folder") + "/" + fileName + "*folder_name:" + dstFolder);
+        client.queryUpdateFile(map.get("src_folder") + "/" + fileName + "*folder_name:" + dstFolder);
         System.out.printf("File \"%s\" is successfully moved to folder \"%s\"\n", fileName, dstFolder);
     }
 
@@ -358,8 +343,7 @@ public class Controller {
         String fileName = map.get("file_name");
         String srcFolder = map.get("src_folder");
         String dstFolder = map.get("dst_folder");
-        client.println("copy file");
-        client.println(srcFolder + "/" + fileName + "/" + dstFolder);
+        client.queryCopyFile(srcFolder + "/" + fileName + "/" + dstFolder);
         System.out.printf("File \"%s\" is successfully copied to folder \"%s\"\n", fileName, dstFolder);
     }
 
@@ -371,15 +355,7 @@ public class Controller {
     }
 
     private List<String> getAllFilesInFolder(boolean detailed, String folderName) {
-        client.println("files");
-        client.println(folderName);
-        List<String> files = new ArrayList<>();
-        do {
-            String str = client.readLine();
-            if (str.equals("end"))
-                break;
-            files.add(str);
-        } while (true);
+        List<String> files = client.queryFiles(folderName);
         if (!detailed) {
             files = files.stream().map(file -> file.substring(file.indexOf('/') + 1, file.lastIndexOf('\"'))).toList();
         }
@@ -410,7 +386,6 @@ public class Controller {
     }
 
     public void exit() {
-        client.println("exit");
         client.close();
     }
 
