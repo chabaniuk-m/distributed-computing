@@ -1,6 +1,6 @@
 package ua.lab8.client;
 
-import ua.lab8.server.Server;
+import ua.lab8.server.SocketServer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,7 +17,7 @@ public class SocketClient implements Client {
 
     public SocketClient() {
         try {
-            socket = new Socket(Server.HOST, Server.PORT);
+            socket = new Socket(SocketServer.HOST, SocketServer.PORT);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
         } catch (IOException e) {
