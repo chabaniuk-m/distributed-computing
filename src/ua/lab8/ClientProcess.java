@@ -1,19 +1,24 @@
 package ua.lab8;
 
-import ua.lab8.client.Client;
-import ua.lab8.client.Controller;
-import ua.lab8.client.SocketClient;
-import ua.lab8.client.View;
+import ua.lab8.client.*;
 
 import java.util.Scanner;
 
 public class ClientProcess {
 
     public static void main(String[] args) {
-        Client client = new SocketClient();
-        Scanner scanner = new Scanner(System.in);
-        Controller controller = new Controller(scanner, client);
-        View view = new View(controller, scanner);
-        view.start();
+        Client client = new AMQClient();
+        Thread t = new Thread(() -> {
+            Scanner scanner = new Scanner(System.in);
+            Controller controller = new Controller(scanner, client);
+            View view = new View(controller, scanner);
+            view.start();
+        });
+        t.start();
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
