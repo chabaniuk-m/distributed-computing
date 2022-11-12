@@ -18,6 +18,10 @@ public class Controller {
         reader = new Reader();
     }
 
+    public Client getClient() {
+        return client;
+    }
+
     private class Reader {
         String readFolderName(List<String> presentFolderNames) {
             String name;
