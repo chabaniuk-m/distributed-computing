@@ -13,6 +13,7 @@ public class View {
     }
 
     public void start() {
+        System.out.println("All commands");
         showCommands();
         while (true) {
             System.out.print("Enter a command: ");
