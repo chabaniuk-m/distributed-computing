@@ -4,13 +4,6 @@ import java.util.List;
 
 public interface Client {
 
-    // old methods
-    // \/\/\/\/\/\/\/\/\/\/
-//    String readLine();
-//    void println(String str);
-    // /\/\/\/\/\/\/\/\/\/\/\
-    // old methods
-
     // new methods
     List<String> queryFolders();
 
