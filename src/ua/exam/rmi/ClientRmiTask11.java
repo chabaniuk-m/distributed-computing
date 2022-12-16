@@ -133,12 +133,12 @@ public class ClientRmiTask11 {
         }
     }
 
-    private void invalidCommand(String command) {
+    public static void invalidCommand(String command) {
         System.out.printf("The command '%s' is not recognized. Try one of the following:\n", command);
         printCommands();
     }
 
-    private void printCommands() {
+    public static void printCommands() {
         System.out.println("""
                  1) s - show all buses;
                  2) g [n] - generate list of n random buses;
