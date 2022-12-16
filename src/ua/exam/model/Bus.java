@@ -10,6 +10,8 @@ public class Bus implements BusInterface {
     private String brand;
     private int manufacturedYear;
     private double mileage;
+    public static Bus b = new Bus("", 0, 0, "", 0, 0);
+
 
     private static final String[] surnames = new String[] {
             "Капітаненко", "Петренко", "Посвятенко", "Зінченко", "Косенко", "Ращенко", "Малаєнко",
@@ -125,7 +127,7 @@ public class Bus implements BusInterface {
             if (n % surnames.size() == 0) {
                 Collections.shuffle(surnames, random);
             }
-            String driverName = surnames.get(n % surnames.size()) + " "
+            String driverName = surnames.get(i % surnames.size()) + " "
                     + nameFirstLetters.charAt(random.nextInt(nameFirstLetters.length())) + "."
                     + nameFirstLetters.charAt(random.nextInt(nameFirstLetters.length())) + ".";
 
@@ -144,7 +146,7 @@ public class Bus implements BusInterface {
             // random mileage
             double mileage = 2_000d + random.nextInt(60_000) / 10d;
 
-            res.add(new Bus(driverName, number, route, brand, manufacturedYear, mileage));
+            res.add(new Bus(driverName, number, route, brand, year, mileage * (LocalDate.now().getYear() - year)));
         }
 
         return res;
@@ -164,5 +166,17 @@ public class Bus implements BusInterface {
             add(new Bus("Миронов О.С.", 9, 4, "Богдан", 2000, 34_807));
             add(new Bus("Слюсарев Н.А.", 10, 5, "Mercedes Benz", 2006, 22_431.5));
         }};
+    }
+
+    @Override
+    public String toString() {
+        return "Bus{" +
+                "driverName='" + driverName + '\'' +
+                ", busNumber=" + busNumber +
+                ", routeNumber=" + routeNumber +
+                ", brand='" + brand + '\'' +
+                ", manufacturedYear=" + manufacturedYear +
+                ", mileage=%.1f".formatted(mileage) +
+                '}';
     }
 }

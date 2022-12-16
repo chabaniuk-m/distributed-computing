@@ -31,4 +31,6 @@ public interface BusInterface {
     List<BusInterface> randomListOfBuses(int n);
 
     List<BusInterface> getFixedListOfBuses();
+
+    String toString();
 }
